@@ -1,0 +1,105 @@
+Automated programmable inputs for virtua fighter
+
+Todo:
+
+- 2 player input is not tested yet.  
+all of the software / function calls assume 2 players are possible, but the hardware hasnt been constructed.  
+note that this would require a second video game controller, with ground connected to the first controller (if the grounds arent connected internally within the console, which they probably are).
+
+- frame delays are not quite exact.
+delay timing is affected by number of commands run between frame() calls, as well as potentially by arduino library interrupts.
+needs to be rewriten to use either pure c w/ no arduino libraries, or use an interrupt for timing.
+
+
+physical construction:
+
+The microcontroller board used is an arduino diecimilia (see www.arduino.cc).
+It is interfaced to a normal retail video game controller (in this case, for the xbox360, but ps2, ps3, saturn, dreamcast could be built similarly ).
+The exact controller used doesn't matter, but it must use a common ground for all buttons.
+One common example of a common ground controller is the madcatz arcade stick  (http://www.madcatz.com/Default.asp?Page=319).
+
+The basic idea for construction is to
+1. disassemble the video game controller, verify with a multimeter that it uses common ground for all buttons.
+2. solder a wire from any ground point on the video game controller to the Gnd pin on the arduino (for all of the arduino connections, solder to a strip of pin header that plugs into the sockets on the arduino if you want it to be removable).
+3. solder a wire from the +5v point on the video game controller to the 5v pin on the arduino (not Vin).  
+Some consoles may not output +5v, in which case you may need an additional power source.  
+Make sure to either set the power select jumper on the arduino to "ext", or always only have the arduino plugged into either the PC or the console, not both.
+4. solder a wire from the non-ground pad under each button on the video game controller to the appropriate pin on the arduino (see pin layout below)  Ideally, solder to the underside of the video game controller pcb, not the top, as this will allow you to reassemble it and use it normally for navigating menus, etc.
+5. program the arduino with the desired inputs, plug the controller into the console, and test away.  
+
+Pin layout
+Each port is associated with an 8 bit register.  
+Not all high bits of each register have a pin associated with them, so Xs are used in the diagram to keep everything lined up.
+
+Port D (labeled "digital" pins)
+7 6 5 4 3 2 1 0
+P K G P K G _ _
+player1 player2
+
+so player 1's Kick button is connected to arduino pin 6, player 2's guard button to pin 2, etc.  Pins 0 1 are used for TX / RX communication between the arduino and PC, so should not be disturbed.
+
+Port B (labeled "digital" pins)
+X X 13 12 11 10 9 8
+_ _ Up Rt Dn Lt _ _
+    player 1
+
+so all of player 1's directional buttons are on port B, right on the dpad is connected to pin 12, etc.
+
+Port C (lableld "analog in" pins)
+X X 5 4 3 2 1 0
+_ _ U R D L _ _
+   player 2
+
+all of player 2's directional buttons are on port C, left on the dpad is connected to pin 2, etc.  
+This is the same bit layout as for player 1, the bits are layed out that way to allow for always masking off the low 2 bits.
+Even though these are labeled as analog in pins, they can be used for digital I/O as well. 
+
+Speaking of I/O, what's actually happening is to set a button on the video game controller as "pressed", the appropriate pin is being set to "output" ( DDRp 1 ) "low" ( PORTp 0 ), where p is the letter of the port.  E.g. using DDRD to set the highest bit to 1 and PORTD to set the highest bit to 0 would result in player 1's Punch button being pressed.
+To set it unpressed, the appropriate pin is set to "input" (DDRp 0) with the internal pullup off ( PORTp 0 ).
+
+
+Installing  software:
+
+See www.arduino.cc for installing the arduino environment.
+
+Copy the hardware/libraries/VF directory to your arduino hardware/libraries/ directory.
+The library should compile the next time you start the arduino environment.
+
+Copy one of the example sketches, e.g. sketches/lau.pde to wherever you keep your sketchbooks.  
+Compile it & upload it to the arduino, unplug it from the PC & plug the controller into the console.  
+Once you push P, lau should start performaing a variety of moves into and out of Kokei stance.
+
+Writing your own inputs:
+
+The functions exported by VF.h should be pretty self explanatory, and the lau.pde file gives example usage. Directions and buttons are constants ( U D L R P K G), binary or them together for multiple presses at once, eg D | R is downforward.
+
+move( U | R );
+set the direction for player 1 to upforward.
+
+buttons( P | K );
+press both P and K for player 1.
+
+frame();
+advance 1 frame (remember, buttons need to be held for at least a frame to register)
+
+frames( 20 );
+advance 20 frames keeping the buttons at their current state.
+
+buttons( off );
+set player 1's buttons to unpressed
+
+all of these commands will take a second argument for the second player (although as yet untested.
+eg.
+move( R , L );
+would move player one to the right and player two to the left, e.g. towards each other.
+
+empty();
+is a shortcut for
+move( off, off );
+buttons( off, off );
+i.e. clear all inputs for both players.
+
+wait_buton( P );
+is used in the setup() sections of my sketches so that the main loop of inputs doesnt start until the given button is pressed. This is a good way to delay your test until you've navigated through the appropriate menus.
+
+
