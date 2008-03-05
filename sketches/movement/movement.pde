@@ -10,8 +10,19 @@ void setup()                    // run once, when the sketch starts
 void after(  void( *act_1 )(), int wait, void( *act_2 )() )
 {
   act_1();
+  //g_cancel();
   frames( wait );
   act_2(); 
+}
+
+// tap G
+void g_cancel()
+{
+  // frame delay on either side may not be strictly necessary . . .
+  frame();
+  buttons(G);
+  frame();
+  empty();
 }
 
 void backdash()
@@ -85,22 +96,22 @@ void cancel( void( *act_1)(), int wait )
 {
   for (int n = 0; n < 6; n++) {
     switch(n) {
-      case 0:
+    case 0:
       after( act_1, wait, dash );
       break;
-      case 1:
+    case 1:
       after( act_1, wait, backdash );
       break;
-      case 2:
+    case 2:
       after( act_1, wait, cd );
       break;
-      case 3:
+    case 3:
       after( act_1, wait, cd_back );
       break;
-      case 4:
+    case 4:
       after( act_1, wait, dm_up );
       break;
-      case 5:
+    case 5:
       after( act_1, wait, dm_down );
       break;
     }
@@ -109,9 +120,37 @@ void cancel( void( *act_1)(), int wait )
 }
 
 
+// alternate given action with a DM in up direction
+void stair_up( void( *act_1)(), int wait )
+{
+  act_1();
+  frames(wait);
+  dm_up();
+  frames(wait);
+}
+
+// alternate given action with a DM in alternating directions
+void square_wave( void( *act_1)(), int wait )
+{
+  act_1();
+  frames(wait);
+  dm_down();
+  frames(wait);
+  act_1();
+  frames(wait);
+  dm_up();
+  frames(wait);  
+}
+
+
 void loop() // run over and over again
 {
-  for (int d = 10; d < 20; ++d ) {
-    cancel( dm_down, d );
-  }   
+  for (int d = 1; d < 20; d += 2) {
+    for (int i = 1; i < 10; ++i ) {
+      stair_up( backdash, d );
+    }
+    for (int i = 1; i < 10; ++i ) {
+      square_wave( dash, d );
+    }
+  }
 }

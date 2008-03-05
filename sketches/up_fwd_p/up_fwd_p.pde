@@ -14,7 +14,7 @@ void loop() // run over and over again
   buttons(G);
   frames(2);
   empty();  
-  frames(18);
+  frames(13);
   move(U|R);
   buttons(P);
   frames(1);
