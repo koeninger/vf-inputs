@@ -54,12 +54,60 @@ void empty()
   move( off, off ); 
 }
 
-// delay 1 frame, e.g. 1/60th of second. = 16.6_ milliseconds
-// XXX: need to account for skipped frames, vs frames in which pins are manipulated
+//  TIMING CODE
+
+boolean is_setup;  // flag whether prescale & timer has been initialized
+int frame_count;  // incremented by interrupt once a frame has passed
+ 
+// interrupt handler
+ISR(TIMER1_COMPA_vect) 
+{
+  frame_count++;
+} 
+
+// setup interrupt timer
+void setup_timer() 
+{
+  // disable interrupts
+  cli();
+
+  // Set CTC mode (Clear Timer on Compare Match) (p.133)
+  // Have to set OCR1A *after*, otherwise it gets reset to 0!
+  TCCR1B = (TCCR1B & ~_BV(WGM13)) | _BV(WGM12);
+  TCCR1A = TCCR1A & ~(_BV(WGM11) | _BV(WGM10));
+
+  // 8 prescaler (p.134)
+  TCCR1B = (TCCR1B & ~( _BV(CS12) | _BV(CS10))) | _BV(CS11);
+
+  // = 16666 microseconds (each count is .5 us)  
+  OCR1A = 33333;  
+
+  // Enable interrupt when TCNT1 == OCR1A (p.136)
+  TIMSK1 |= _BV(OCIE1A);
+
+  frame_count = 0;
+
+  // enable interrupts 
+  sei();
+
+  is_setup = true;
+}
+
+// wait for 1 frame, e.g. 1/60th of second. = 16.6_ milliseconds
 void frame()
 {
-  delay(16);
-  delayMicroseconds(666);
+  // kinda silly to check this every time, but avoids breaking old sketches
+  // by making users setup the timer manually
+  if ( ! is_setup ) {
+    setup_timer();
+  }
+
+  // dunno if spinning until the flag is set by interrupt is the best way to do this . . .
+  while( frame_count < 1 ) {
+    ;
+  }
+  frame_count = 0;
+
 }
 
 void frames( int skip )
@@ -74,15 +122,15 @@ void frames( int skip )
 // bc arduino starts up with lots of pins set as output (controller button pressed)
 void wait_button( byte button )
 {
- // set pin corresponding to button as input, dont change tx rx
- DDRD &= ( ~button | dmask );
+  // set pin corresponding to button as input, dont change tx rx
+  DDRD &= ( ~button | dmask );
  
- byte orig_state = ( PIND & button ); 
+  byte orig_state = ( PIND & button ); 
  
- while ( orig_state == ( PIND & button ) ) {
-   delay(1);
- }
+  while ( orig_state == ( PIND & button ) ) {
+    frame();
+  }
  
- DDRD &= dmask;
- PORTD &= dmask;
+  DDRD &= dmask;
+  PORTD &= dmask;
 }
