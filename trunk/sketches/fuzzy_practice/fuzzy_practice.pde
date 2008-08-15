@@ -9,26 +9,57 @@ void setup() {
   wait_button( P );
 }
 
-void jab_throw() {
+void jab() {
   tap( N, P );
-  frames( 18 );
+  tap( N, G );
+  frames( 12 ); 
+}
+
+void elbow() {
+  tap( F, P );
+  frames( 25 );
+}
+
+void thrw() {
   tap( N, P|G);
-  frames( 8 );
+  frames( 12 );  
+}
+
+void jab_thrw() {
+  jab();
+  thrw();
 }
 
 void jab_elbow() {
-  tap( N, P );
-  tap( N, G );
+  jab();
+  elbow();
+}
+
+void lp_lp() {
+  tap( D, P );
+  frames( 20 );
+  tap( D, P );
+  frames( 8 ); 
+}
+
+void lp_grd() {
+  tap( D, P );
+  frames( 20 );
+  buttons( G );
+  move( D );
   frames( 12 );
-  tap( F, P );
-  frames( 8 );
+  move( N );
+  frames( 20 );
+  empty();
+  frames( 2 );
+  choose( 2, thrw, elbow ); 
 }
 
 void loop() {
-  choose( 2, jab_elbow, jab_throw );
+  choose( 4, jab_elbow, jab_thrw, lp_lp, lp_grd );
   buttons( G );
   frames( 50 );
-  frames( random( 100 ) );
+  frames( random( 50 ) );
   empty();
   frames(2);
 }
