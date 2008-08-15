@@ -2,6 +2,7 @@
 #define VF
 
 #include "WConstants.h"
+#include <stdarg.h>
 
 // constants relating controls to pins
 // player1 and player 2 movement directions are on different headers,
@@ -23,11 +24,14 @@
 
 // clear pins
 #define off  B00000000
+#define N    B00000000
 
 // masks off unused pins
 #define bmask  B11000000  // for portb and portc, top 2 pins unavailable
 #define cmask  B11000000  // for portb and portc, top 2 pins unavailable
 #define dmask  B00000011  // for portd, pins 0 1 are rx tx, will break usb
+
+typedef void(*action)();
 
 // generally, when setting controls,
 // pressed = output (DDRx bit set to 1), low (PORTx bit set to 0)
@@ -57,5 +61,13 @@ void frames( int skip );
 // if this is the first thing called, need to clear everything with empty(); first,
 // bc arduino starts up with lots of pins set as output (controller button pressed)
 void wait_button( byte button );
+
+// press and then release move /buttons for given number of frames (default 2 )
+void tap( byte mov, byte but, int frm );
+void tap( byte mov, byte but );
+void tap( byte mov );
+
+// randomly choose among variable num of actions (void functions)
+void choose( int num, ... );
 
 #endif

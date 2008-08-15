@@ -54,6 +54,36 @@ void empty()
   move( off, off ); 
 }
 
+// press and then release move /buttons for given number of frames (default 2 )
+void tap( byte mov, byte but, int frm ){
+  move( mov );
+  buttons( but );
+  frames( frm );
+  empty();
+  frames( frm ); 
+}
+
+void tap( byte mov, byte but ){
+  tap( mov, but, 2 );
+}
+void tap( byte mov ){
+  tap( mov, off, 2 );
+}
+
+// randomly choose among variable num of actions (void functions)
+void choose( int num, ... ) {
+   va_list args;
+   
+   int choice = random( num ) + 1;
+   
+   va_start( args, num );
+   for(  ; num > 0 ; --num ) {
+     action f = va_arg( args, action );
+     if ( num == choice ) { f(); } 
+   }
+   va_end( args ); 
+}
+
 //  TIMING CODE
 
 boolean is_setup;  // flag whether prescale & timer has been initialized
