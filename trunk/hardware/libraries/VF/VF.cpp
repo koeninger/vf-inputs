@@ -164,3 +164,19 @@ void wait_button( byte button )
   DDRD &= dmask;
   PORTD &= dmask;
 }
+
+
+// return true if given button is pressed
+boolean is_pressed( byte button )
+{
+  // set pin corresponding to button as input, dont change tx rx
+  DDRD &= ( ~button | dmask );
+ 
+  byte result = ( PIND & button ); 
+ 
+  DDRD &= dmask;
+  PORTD &= dmask;
+  return result ? false : true;
+}
+
+
