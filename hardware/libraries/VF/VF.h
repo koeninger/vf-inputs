@@ -62,6 +62,9 @@ void frames( int skip );
 // bc arduino starts up with lots of pins set as output (controller button pressed)
 void wait_button( byte button );
 
+// return true if given button is pressed
+boolean is_pressed( byte button );
+
 // press and then release move /buttons for given number of frames (default 2 )
 void tap( byte mov, byte but, int frm );
 void tap( byte mov, byte but );
