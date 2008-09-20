@@ -1,8 +1,8 @@
 #include <VF.h>
 
 // swap these to move to 2p side
-#define F L
-#define B R
+byte F = L;
+byte B = R;
 
 void setup() {
   empty();
@@ -20,8 +20,16 @@ void elbow() {
   frames( 25 );
 }
 
+void df_thrw() {
+  tap( D|F, P|G); 
+}
+
+void f_thrw() {
+  tap( F, P|G); 
+}
+
 void thrw() {
-  tap( N, P|G);
+  choose( 2, f_thrw, df_thrw );
   frames( 12 );  
 }
 
@@ -55,8 +63,16 @@ void lp_grd() {
   choose( 2, thrw, elbow ); 
 }
 
+
 void loop() {
-  choose( 4, jab_elbow, jab_thrw, lp_lp, lp_grd );
+  if ( is_pressed( K ) ) {
+    byte temp;
+    temp = F;
+    F = B;
+    B = temp;
+  }
+  //choose( 4, jab_elbow, jab_thrw, lp_lp, lp_grd );
+  choose( 3, lp_lp, lp_grd, lp_grd );
   buttons( G );
   frames( 50 );
   frames( random( 50 ) );
