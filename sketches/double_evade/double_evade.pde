@@ -1,5 +1,9 @@
 #include <VF.h>
 
+// scenario to train 2 ETEG in a row
+// cpu will lowpunch, you respond with elbow, which it will block
+// then it will do jab (you evade) then elbow / throw
+
 // swap these to move to 2p side
 byte F = L;
 byte B = R;
@@ -60,7 +64,6 @@ void lp_grd() {
   frames( 20 );
   empty();
   frames( random(15) );
-  choose( 2, thrw, elbow ); 
 }
 
 
@@ -71,8 +74,9 @@ void loop() {
     F = B;
     B = temp;
   }
-  //choose( 4, jab_elbow, jab_thrw, lp_lp, lp_grd );
-  choose( 3, lp_lp, lp_grd, lp_grd );
+  lp_grd();
+  jab();
+  choose( 2, thrw, elbow ); 
   buttons( G );
   frames( 50 );
   frames( random( 50 ) );
