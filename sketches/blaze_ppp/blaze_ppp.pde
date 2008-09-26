@@ -1,8 +1,6 @@
 #include <VF.h>
 
-// scenario to train 2 ETEG in a row
-// cpu will lowpunch, you respond with elbow, which it will block
-// then it will do jab (you evade) then elbow / throw
+// el blaze ppp normal hit mixups
 
 // swap these to move to 2p side
 byte F = L;
