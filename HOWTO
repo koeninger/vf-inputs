@@ -6,9 +6,7 @@ Todo:
 all of the software / function calls assume 2 players are possible, but the hardware hasnt been constructed.  
 note that this would require a second video game controller, with ground connected to the first controller (if the grounds arent connected internally within the console, which they probably are).
 
-- frame delays are not quite exact.
-delay timing is affected by number of commands run between frame() calls, as well as potentially by arduino library interrupts.
-needs to be rewriten to use either pure c w/ no arduino libraries, or use an interrupt for timing.
+- frame delays are not quite exact, despite using interrupts for timing.
 
 
 physical construction:
@@ -60,7 +58,8 @@ To set it unpressed, the appropriate pin is set to "input" (DDRp 0) with the int
 
 Installing  software:
 
-See www.arduino.cc for installing the arduino environment.
+See www.arduino.cc for installing the arduino environment.  
+Currently tested working with arduino release 15
 
 Copy the hardware/libraries/VF directory to your arduino hardware/libraries/ directory.
 The library should compile the next time you start the arduino environment.
