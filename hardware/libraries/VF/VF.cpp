@@ -1,4 +1,3 @@
-#include "WProgram.h"
 #include "VF.h"
 
 // generally, when setting controls,
@@ -87,12 +86,12 @@ void choose( int num, ... ) {
 //  TIMING CODE
 
 boolean is_setup;  // flag whether prescale & timer has been initialized
-int frame_count;  // incremented by interrupt once a frame has passed
+boolean is_waiting;  // set to false by interrupt once a frame has passed
  
 // interrupt handler
 ISR(TIMER1_COMPA_vect) 
 {
-  frame_count++;
+  is_waiting = false;
 } 
 
 // setup interrupt timer
@@ -115,7 +114,7 @@ void setup_timer()
   // Enable interrupt when TCNT1 == OCR1A (p.136)
   TIMSK1 |= _BV(OCIE1A);
 
-  frame_count = 0;
+  is_waiting = true;
 
   // enable interrupts 
   sei();
@@ -133,11 +132,11 @@ void frame()
   }
 
   // dunno if spinning until the flag is set by interrupt is the best way to do this . . .
-  while( frame_count < 1 ) {
-    ;
+  while( is_waiting ) {
+    delayMicroseconds(10);
   }
-  frame_count = 0;
-
+  is_waiting = true;
+  sei();
 }
 
 void frames( int skip )
