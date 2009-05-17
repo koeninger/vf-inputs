@@ -2,16 +2,14 @@ Automated programmable inputs for virtua fighter
 
 Todo:
 
-- 2 player input is not tested yet.  
-all of the software / function calls assume 2 players are possible, but the hardware hasnt been constructed.  
-note that this would require a second video game controller, with ground connected to the first controller (if the grounds arent connected internally within the console, which they probably are).
-
+- Need a convenient 2nd player equivalent for tap() function
 - frame delays are not quite exact, despite using interrupts for timing.
 
 
 physical construction:
 
-The microcontroller board used is an arduino diecimilia (see www.arduino.cc).
+The microcontroller board used is an arduino diecimilia (see www.arduino.cc).  
+The newer duemilanove boards are also tested and working.
 It is interfaced to a normal retail video game controller (in this case, for the xbox360, but ps2, ps3, saturn, dreamcast could be built similarly ).
 The exact controller used doesn't matter, but it must use a common ground for all buttons.
 One common example of a common ground controller is the madcatz arcade stick  (http://www.madcatz.com/Default.asp?Page=319).
@@ -21,9 +19,11 @@ The basic idea for construction is to
 2. solder a wire from any ground point on the video game controller to the Gnd pin on the arduino (for all of the arduino connections, solder to a strip of pin header that plugs into the sockets on the arduino if you want it to be removable).
 3. solder a wire from the +5v point on the video game controller to the 5v pin on the arduino (not Vin).  
 Some consoles may not output +5v, in which case you may need an additional power source.  
-Make sure to either set the power select jumper on the arduino to "ext", or always only have the arduino plugged into either the PC or the console, not both.
+Make sure to either set the power select jumper on the arduino to "ext", or always only have the arduino plugged into either the PC or the console, not both. Newer arduinos don't have a power select jumper, I haven't tested to see if their diode setup works correctly for being plugged into both the console and PC at once.
 4. solder a wire from the non-ground pad under each button on the video game controller to the appropriate pin on the arduino (see pin layout below)  Ideally, solder to the underside of the video game controller pcb, not the top, as this will allow you to reassemble it and use it normally for navigating menus, etc.
 5. program the arduino with the desired inputs, plug the controller into the console, and test away.  
+
+If you're doing 2 player programmability, I would recommend verifying that the console uses a common ground across both controllers.  I would also recommend only running +5v from one of the controllers, not both.  Other than that construction is the same. 
 
 Pin layout
 Each port is associated with an 8 bit register.  
@@ -43,7 +43,7 @@ _ _ Up Rt Dn Lt _ _
 
 so all of player 1's directional buttons are on port B, right on the dpad is connected to pin 12, etc.
 
-Port C (lableld "analog in" pins)
+Port C (labeled "analog in" pins)
 X X 5 4 3 2 1 0
 _ _ U R D L _ _
    player 2
@@ -87,10 +87,12 @@ advance 20 frames keeping the buttons at their current state.
 buttons( off );
 set player 1's buttons to unpressed
 
-all of these commands will take a second argument for the second player (although as yet untested.
+all of these commands will take a second argument for the second player
 eg.
 move( R , L );
 would move player one to the right and player two to the left, e.g. towards each other.
+buttons( P, P );
+would make both player 1 and player 2 punch.
 
 empty();
 is a shortcut for
