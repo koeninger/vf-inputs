@@ -9,7 +9,7 @@
 void buttons(byte player1, byte player2)
 {
   // shift player2 bits to appropriate pins
-  byte val = player1 | ( player2 >> 4 );
+  byte val = player1 | ( player2 >> 3 );
   // set portd low without disturbing value of tx rx on pins 0 and 1 
   PORTD &= dmask;
   // clear whatever value was there, replace with desired value, 
