@@ -59,14 +59,30 @@ To set it unpressed, the appropriate pin is set to "input" (DDRp 0) with the int
 Installing  software:
 
 See www.arduino.cc for installing the arduino environment.  
-Currently tested working with arduino release 15
+Currently tested working with arduino release 15, and arduino 1.0
 
+For older versions of arduino:
 Copy the hardware/libraries/VF directory to your arduino hardware/libraries/ directory.
+
+For arduino 1.0, this has changed:
+the first time you start the arduino IDE, it will create a folder to hold your sketches.
+Create a directory named "libraries" in that folder, if it doesnt exist already, and copy hardware/libraries/VF to it.
+On osx for example, the correct path would look like
+
+/Users/user/Documents/Arduino/libraries/VF
+
+where the folder VF contains 2 files, VF.cpp and VF.h
+
 The library should compile the next time you start the arduino environment.
 
 Copy one of the example sketches, e.g. sketches/lau.pde to wherever you keep your sketchbooks.  
 Compile it & upload it to the arduino, unplug it from the PC & plug the controller into the console.  
 Once you push P, lau should start performaing a variety of moves into and out of Kokei stance.
+
+If you did not wire up the controller such that the P button is still usable, simply comment out the wait_button line like so:
+  //wait_button( P );
+and the script will start as soon as the controller is plugged in.
+
 
 Writing your own inputs:
 

@@ -2,7 +2,11 @@
 #define VF
 
 #include <stdarg.h>
+#if defined(ARDUINO) && ARDUINO >= 100
+#include <Arduino.h>
+#else
 #include <WProgram.h>
+#endif
 
 // constants relating controls to pins
 // player1 and player 2 movement directions are on different headers,
