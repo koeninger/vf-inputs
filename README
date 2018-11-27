@@ -77,7 +77,7 @@ The library should compile the next time you start the arduino environment.
 
 Copy one of the example sketches, e.g. sketches/lau.pde to wherever you keep your sketchbooks.  
 Compile it & upload it to the arduino, unplug it from the PC & plug the controller into the console.  
-Once you push P, lau should start performaing a variety of moves into and out of Kokei stance.
+Once you push P, Lau should start performing a variety of moves into and out of Kokei stance.
 
 If you did not wire up the controller such that the P button is still usable, simply comment out the wait_button line like so:
   //wait_button( P );
